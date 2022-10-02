@@ -110,6 +110,13 @@ def post_comment(request, post_id):
 
 
 def post_search(request):
+	"""
+	* THIS IS USED TO SEARCH FOR POSTS
+	! ACTUALLY THIS COMMENT IS A TEST COMMENT TO CHECK "BETTER COMMENTS"
+	? EXTENSION IN VISUAL STUDIO CODE!
+	TODO: INSTALL THIS EXTENSION. IT IS SO GOOD!
+	"""
+
 	form = SearchForm()
 	query = None
 	results = []
@@ -125,7 +132,7 @@ def post_search(request):
 				similarity=TrigramSimilarity('title', query),
 				# search=search_vector, 
 				# rank=SearchRank(search_vector,search_query),
-			# ).filter(rank__gte=0.3).order_by('-rank')
+			# ).filter(rank__gte=0.3).order_by('-rank
 			).filter(similarity__gt=0.1).order_by('-similarity')
 
 	return render(request, 
