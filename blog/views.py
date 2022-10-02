@@ -1,7 +1,8 @@
 from django.views.generic import ListView
 from django.views.decorators.http import require_POST
 from django.shortcuts import render, get_object_or_404
-from django.contrib.postgres.search import SearchVector
+from django.contrib.postgres.search import (SearchVector,
+			SearchQuery, SearchRank, TrigramSimilarity)
 from django.core.mail import send_mail
 from django.core.paginator import (Paginator, EmptyPage,
 									PageNotAnInteger)
@@ -117,9 +118,15 @@ def post_search(request):
 		form = SearchForm(request.GET)
 		if form.is_valid():
 			query = form.cleaned_data['query']
+			# search_vector = SearchVector('title', weight='A', config='english') + \
+			# 		SearchVector('body', weight='B', config='english')
+			# search_query = SearchQuery(query, config='english')
 			results = Post.published.annotate(
-				search=SearchVector('title', 'body'),
-			).filter(search=query)
+				similarity=TrigramSimilarity('title', query),
+				# search=search_vector, 
+				# rank=SearchRank(search_vector,search_query),
+			# ).filter(rank__gte=0.3).order_by('-rank')
+			).filter(similarity__gt=0.1).order_by('-similarity')
 
 	return render(request, 
 		'blog/post/search.html',
